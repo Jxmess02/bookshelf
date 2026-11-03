@@ -1,62 +1,46 @@
 @extends('layouts.app')
 
 @section('content')
-    <h1>Add New Book</h1>
-
-    <form class="form-panel" method="POST" action="{{ route('books.store') }}">
+    <h1> Add New Book</h1>
+    <form class="form-panel" method="POST"
+        action="{{ route('books.store') }}">
         @csrf
-
-        <label for="title">Book Title</label>
-        <input
-            id="title"
-            name="title"
-            type="text"
-            maxlength="150"
-            value="{{ old('title') }}"
-            required
-        >
+        <label>Book Title</label>
+        <input type="text" name="title"
+        maxlength="150"
+        required
+        value="{{ old('title') }}"><br>
         @error('title')
-            <p>{{ $message }}</p>
+            <p class="error">{{$message}}</p>
         @enderror
 
-        <label for="author">Book Author</label>
-        <input
-            id="author"
-            name="author"
-            type="text"
-            maxlength="100"
-            value="{{ old('author') }}"
-            required
-        >
-        @error('author')
-            <p>{{ $message }}</p>
+        <label>Book Author</label>
+        <input type="text" name="author"
+         maxlength="100"
+        required
+        value="{{ old('author') }}"><br>
+         @error('author')
+            <p class="error">{{$message}}</p>
         @enderror
 
-        <label for="genre">Book Genre</label>
-        <input
-            id="genre"
-            name="genre"
-            type="text"
-            maxlength="50"
-            value="{{ old('genre') }}"
-            required
-        >
+        <label>Book Genre</label>
+        <input type="text" name="genre"
+         maxlength="50"
+        required
+        value="{{ old('genre') }}"><br>
         @error('genre')
-            <p>{{ $message }}</p>
+            <p class="error">{{$message}}</p>
         @enderror
 
-        <label for="cover">Book Cover</label>
-        <input
-            id="cover"
-            name="cover"
-            type="url"
-            maxlength="2048"
-            value="{{ old('cover') }}"
-        >
-        @error('cover')
-            <p>{{ $message }}</p>
+        <label>Book Cover</label>
+        <input type="text" name="cover"
+         maxlength="2048"
+        value="{{ old('cover') }}"><br>
+         @error('cover')
+            <p class="error">{{$message}}</p>
         @enderror
 
-        <button type="submit">Add Book</button>
+        <button>Add Book</button>
+
     </form>
 @endsection
