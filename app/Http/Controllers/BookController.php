@@ -17,4 +17,23 @@ class BookController extends Controller
     {
         return view('books.show', compact('book'));
     }
+
+    public function create()
+    {
+        return view('books.create');
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'title' => ['required', 'string', 'max:150'],
+            'author' => ['required', 'string', 'max:100'],
+            'genre' => ['required', 'string', 'max:50'],
+            'cover' => ['nullable', 'url', 'max:2048'],
+        ]);
+
+        Book::create($validated);
+
+        return redirect()->route('books.index')->with('success', 'Book created successfully.');
+    }
 }

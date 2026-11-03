@@ -14,6 +14,11 @@ class ExampleTest extends TestCase
     {
         $response = $this->get('/');
 
-        $response->assertStatus(200);
+        $response->assertRedirect('/books');
+    }
+
+    public function test_the_books_create_route_exists(): void
+    {
+        $this->assertTrue(route('books.create') !== null);
     }
 }

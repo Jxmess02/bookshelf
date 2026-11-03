@@ -4,6 +4,7 @@
 @section('content')
     <h1>Books Collection</h1>
     <p>Browse and manage books in our database.</p>
+    <a class="button" href="{{ route('books.create') }}">Add New Book</a>
     <div class="book-grid"> 
         @foreach ($books as $book)
             <a href="{{ url('books/' . $book->id) }}">
