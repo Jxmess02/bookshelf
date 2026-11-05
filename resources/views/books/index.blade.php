@@ -13,8 +13,15 @@
                     <img src="{{ $book->cover }}" alt="">
                     <h2>{{ $book->title }}</h2>
                     <p>by {{ $book->author }}</p>
+                    <p>Published by: {{ $book->publisher?->name ?? 'Unknown' }}</p>
+                    <a class="button" href="{{ route('books.edit', $book) }}">Edit Book</a>
+                    <form action="{{ route('books.destroy', $book) }}" method="DELETE">
+                        @csrf
+                        @method('DELETE')
+                        <button class="danger">Delete Book</button>
+                    </form>
                 </article>
-                
+            </a>
         @endforeach
     </div>
 @endsection

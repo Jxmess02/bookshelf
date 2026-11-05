@@ -31,5 +31,10 @@ Route::post('/books', [BookController::class, 'store'])
 Route::get('/books/edit/{book}', [BookController::class, 'edit'])
 ->name('books.edit');
 
+// update book
 Route::put('/books/{book}', [BookController::class, 'update'])
 ->name('books.update');
+
+// deleting a book
+Route::delete('/books/{book}', [BookController::class, 'destroy'])
+->name('books.destroy');
