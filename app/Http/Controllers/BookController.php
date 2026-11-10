@@ -10,7 +10,7 @@ class BookController extends Controller
 {
     public function index()
     {
-        $books = Book::with('publisher')->get();
+        $books = Book::with('publisher')->paginate(5);
         return view('books.index', compact('books'));
     }
 
@@ -31,10 +31,16 @@ class BookController extends Controller
             'title' => ['required', 'string', 'max:150'],
             'author' => ['required', 'string', 'max:100'],
             'genre' => ['required', 'string', 'max:50'],
-            'cover' => ['nullable', 'url', 'max:2048'],
+            'cover' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'url', 'max:2048'],
             'publisher_id' => ['nullable', 'integer', 'exists:publishers, id']
         ]);
 
+        if ($request->hasFile('cover')) {
+            $coverPath = $request->file('cover')->store('covers', 'public');
+            $validated['cover'] = $coverPath;
+        }
+
+        $validated['cover'] = $cover;
         Book::create($validated);
 
         return redirect()->route('books.index')->with('success', 'Book created successfully.');
@@ -61,8 +67,7 @@ class BookController extends Controller
 
     public function destroy(Book $book)
     {
-        $book->delete();
-
+        Storage::disk('public')->delete($book->cover);
         return redirect()->route('books.index')->with('success', 'Book deleted successfully.');
     }
 }

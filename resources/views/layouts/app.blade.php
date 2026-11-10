@@ -11,6 +11,18 @@
 
     <header class="container" site-header>
         <a href="{{ route('books.index') }}">Bookshelf</a>
+
+        @guest
+            <a href="{{ route('login') }}">Login</a>
+        @endguest
+
+        @auth
+            <p>Hello, {{ auth()->user()->name }}!</p>
+            <form method="POST" action="{{ route('logut') }}">
+                @csrf
+                <button>Log Out</button>
+            </form>
+        @endauth
     </header>
 
     <main class="container" site-main>
@@ -18,8 +30,6 @@
 
     </main>
 
-
-    
     
 </body>
 </html>

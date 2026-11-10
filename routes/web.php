@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookController;
 use Illuminate\Support\Facades\Route;
+
 
 // Route::get('/', function () {
 // // return view('index');
@@ -12,14 +14,30 @@ use Illuminate\Support\Facades\Route;
 // // return "Books Page";
 // // });
 
+//public pages
 Route::redirect('/', '/books');
 
 Route::get('/books', [BookController::class, 'index'])
 ->name('books.index'); // optional name for the route
 
+
+
 // new/add book form
 Route::get('/books/create', [BookController::class, 'create'])
 ->name('books.create');
+
+// auth guest login form 
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'loginForm'])
+        ->name('login');
+    Route::post('/login', [AuthController::class, 'login'])
+        ->name('login.store');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout'])
+        ->name('logout');
+});
 
 Route::get('/books/{book}', [BookController::class, 'show'])
 ->name('books.show');
