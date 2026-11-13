@@ -1,61 +1,73 @@
-@extends('layouts.app')
+    @extends('layouts.app')
 
+    @section('content')
+        <h1>Book Collection</h1>
+        <p>Browse and manage books in our database</p>
 
-@section('content')
-    <h1>Books Collection</h1>
-    <p>Browse and manage books in our database.</p>
-    <a class="button" href="{{ route('books.create') }}">Add New Book</a>
-    <div class="book-grid"> 
-        @foreach ($books as $book)
-            <a href="{{ url('books/' . $book->id) }}">
+        <a class="button" href="{{ route('books.create') }}">Add Book</a>
+        @session('success')
+            <p class="success">{{ session('success') }}</p>
+        @endsession
+        <div class="book-grid">
+            @foreach ($books as $book)
                 <article class="card">
                     <span class="tag">{{ $book->genre }}</span>
-                    <img src="{{ str_starts_with($book->cover, 'http') ? 
-                    $book->cover : Storage::url($book->cover) }}" 
-                    alt="{{ $book->title }}">
-                    <h2>{{ $book->title }}</h2>
+                    <a href="{{ route('books.show', $book) }}" class="card-image-link">
+                        @if ($book->cover)
+                            <img src="{{ str_starts_with($book->cover, 'http') 
+                                ? $book->cover
+                                : Storage::url($book->cover) }}" alt="{{ $book->title }}" class="card-image">
+                        @else
+                            <div class="card-image-placeholder">No Cover Available</div>
+                        @endif
+                    </a>
+                    <h2 class="card-title">
+                        <a href="{{ route('books.show', $book) }}">{{ $book->title }}</a>
+                    </h2>
+                    <p class="card-author">
                     <p>by {{ $book->author }}</p>
-                    <p>Published by: {{ $book->publisher?->name ?? 'Unknown' }}</p>
-                    <a class="button" href="{{ route('books.edit', $book) }}">Edit Book</a>
-                    <form action="{{ route('books.destroy', $book) }}" method="DELETE">
+                    <p>Published by: {{ $book->publisher->name ?? 'Unknown' }}</p>
+                    <div class="card-actions">
+                        <a class="button button-secondary" href="{{ route('books.edit', $book) }}">Edit Book</a>
+                    </div>
+                    <form action="{{ route('books.destroy',  $book) }}" method="POST">
                         @csrf
                         @method('DELETE')
-                        <button class="danger">Delete Book</button>
+                        <button class="button button-danger">Delete</button>
                     </form>
                 </article>
-            </a>
-        @endforeach
-    </div>
-    @if($books->total() > 0)
-    <p>
-        Showing {{ $books->firstItem() }} - {{  $books->lastItem() }}
-        of {{ $books->total() }} books
-    </p>
-    @endif
-    @if ($books->hasPages())
-    <nav class="paginations">
-        <span class="pagination-links">
-            @if ($books->onFirstPage())
-                <span class="disabled">Previous</span>
-            @else
-                <a href="{{ $books->previousPageUrl() }}" rel="prev">Previous</a>
-            @endif
-
-            @foreach ($books->getUrlRange(1, $books->lastPage()) as $page => $url)
-                @if ($page == $books->currentPage())
-                    <span class="current">{{ $page }}</span>
-                @else
-                    <a href="{{ $url }}">{{ $page }}</a>
-                @endif
             @endforeach
+        </div>
+        @if ($books->total() > 0)
+            <p>
+                Showing {{ $books->firstItem() }} - {{ $books->lastItem() }}
+                of {{ $books->total() }} books
+            </p>
+        @endif
+        @if ($books->hasPages())
+            <nav class="pagination">
+                @if ($books->onFirstPage())
+                    <span class="pagination-disabled">
+                        Previous
+                    </span>
+                @else
+                    <a class="button" href="{{ $books->previousPageUrl() }}">
+                        Previous
+                    </a>
+                @endif
+            </nav>
+            
+        @endif
 
-            @if ($books->hasMorePages())
-                <a href="{{ $books->nextPageUrl() }}" rel="next">Next</a>
-            @else
-                <span class="pagination-disabled">Next</span>
-            @endif
+        @if ($books->hasMorePages())
+            <a class="button" href="{{ $books->nextPageUrl() }}">
+                Next
+            </a>
+        @else
+            <span class="pagination-disabled">
+                Next
+            </span>
+        @endif
+    @endsection
 
 
-        
-    @endif 
-@endsection

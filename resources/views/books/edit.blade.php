@@ -3,14 +3,15 @@
 @section('content')
     <h1> Edit Book</h1>
     <form class="form-panel" method="POST"
-        action="{{ route('books.update', $book) }}">
+        action="{{ route('books.update', $book) }}"
+        enctype="multipart/form-data">
         @csrf
         @method('PUT')
         <label>Book Title</label>
         <input type="text" name="title"
         maxlength="150"
         required
-        value="{{ old('title') }}"><br>
+        value="{{ old('title', $book->title) }}"><br>
         @error('title')
             <p class="error">{{$message}}</p>
         @enderror
@@ -19,7 +20,7 @@
         <input type="text" name="author"
          maxlength="100"
         required
-        value="{{ old('author') }}"><br>
+        value="{{ old('author', $book->author) }}"><br>
          @error('author')
             <p class="error">{{$message}}</p>
         @enderror
@@ -28,16 +29,20 @@
         <input type="text" name="genre"
          maxlength="50"
         required
-        value="{{ old('genre') }}"><br>
+        value="{{ old('genre', $book->genre) }}"><br>
         @error('genre')
             <p class="error">{{$message}}</p>
         @enderror
 
         <label>Book Cover</label>
-        <input type="text" name="cover"
-         maxlength="2048"
-        value="{{ old('cover') }}"><br>
-         @error('cover')
+        @if ($book->cover)
+            <img
+                src="{{ str_starts_with($book->cover, 'http') ? $book->cover : Storage::url($book->cover) }}"
+                alt="Current cover for {{ $book->title }}"
+            >
+        @endif
+        <input type="file" name="cover" accept="image/jpeg,image/png,image/webp">
+        @error('cover')
             <p class="error">{{$message}}</p>
         @enderror
 
@@ -50,6 +55,9 @@
                 </option>
             @endforeach
         </select>
+        @error('publisher_id')
+            <p class="error">{{ $message }}</p>
+        @enderror
 
         <button>Update Book</button>
 

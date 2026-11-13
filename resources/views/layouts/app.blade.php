@@ -3,33 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Bookshelf</title>
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 </head>
 <body>
-
-    <header class="container" site-header>
+    <header class="site-header">
         <a href="{{ route('books.index') }}">Bookshelf</a>
-
         @guest
-            <a href="{{ route('login') }}">Login</a>
+            <a href="{{ route('books.index') }}">Login</a>
         @endguest
 
         @auth
-            <p>Hello, {{ auth()->user()->name }}!</p>
-            <form method="POST" action="{{ route('logut') }}">
+            <p>Hello, {{ auth()->user()->name }}</p>
+            <form method="POST" action="{{ route('logout') }}">
                 @csrf
-                <button>Log Out</button>
+                <button>Log out</button>
             </form>
         @endauth
     </header>
 
-    <main class="container" site-main>
-        @yield('content')
-
+    <main class="container">
+        @yield('content') {{-- placeholder --}}
     </main>
 
-    
 </body>
 </html>

@@ -1,57 +1,46 @@
 <?php
 
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\BookController;
-use Illuminate\Support\Facades\Route;
+namespace App\Http\Controllers;
 
-// Route::get('/', function () {
-//     // return view('index');
-//     return "Hello World!";
-// });
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 
-// // Route::get('/books', function(){
-// //     return "Books Page";
-// // });
+class AuthController extends Controller
+{
+    public function loginForm()
+    {
+        return view('auth.login');
+    }
 
-
-// for unauthenticated users (guest)
-Route::middleware('guest')->group(function(){
-    Route::get('/Login', [AuthController::class, 'loginForm'])
-        ->name('login');
-    Route::post('/Login', [AuthController::class, 'login'])
-        ->name('login.store');
-});
-
-// for authenticated (logged in) users
-Route::middleware('auth')->group(function(){
-    Route::post('logout', [AuthController::class, 'logout'])
-        ->name('logout');
-    // new/add book form
-    Route::get('/books/create', [BookController::class, 'create'])
-        ->name('books.create');
-    // edit
-    Route::get('/books/{book}/edit/', [BookController::class, 'edit'])
-        ->name('books.edit');
+    public function login (Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => ['required', 'email', 'max:255'],
+            'password' => ['required', 'string']
+        ]);
+        // verifies the credentials and authenticates the user
+        
+        if(!Auth::attempt($credentials)){
+            throw ValidationException::withMessages([
+                'email' => 'The email or password is incorrect'
+            ]);
+        }
     
-    // update book
-    Route::put('/books/{book}', [BookController::class, 'update'])
-        ->name('books.update');
-    
-    // page for displaying a single book
-    Route::get('/books/{book}', [BookController::class, 'show'])
-        ->name('books.show');
-    
-    // store new book
-    Route::post('/books', [BookController::class, 'store'])
-        ->name('books.store');
-    
-    // delete book 
-    Route::delete('/books/{book}', [BookController::class, 'destroy'])
-        ->name('books.destroy');
-});
+        // issue a new session id
+        $request->session()->regenerate();
+        return redirect()->intended(route('books.index'));
+    }
 
-// public routes
-Route::redirect('/', '/books');
-// page for displaying individual books
-Route::get('/books', [BookController::class, 'index'])
-    ->name('books.index'); // optional name for the route
+    public function logout(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('books.index')
+            ->with('success', 'You have been logged out.');
+    }
+
+}

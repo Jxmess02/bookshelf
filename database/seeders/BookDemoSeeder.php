@@ -2,19 +2,43 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Book;
+use App\Models\Publisher;
 use Illuminate\Database\Seeder;
-use App\Models\publisher;
 
 class BookDemoSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        $publisher = Publisher::create([
-            'name' => 'Campus Demo Press'
+        $publisher = Publisher::firstOrCreate([
+            'name' => 'Campus Demo Press',
         ]);
+
+        $books = [
+            [
+                'title' => 'Learning Web Layout',
+                'author' => 'Alex Rivera',
+                'genre' => 'Education',
+            ],
+            [
+                'title' => 'A Practical Guide to Databases',
+                'author' => 'Sam Reyes',
+                'genre' => 'Technology',
+            ],
+        ];
+
+        foreach ($books as $book) {
+            Book::firstOrCreate(
+                [
+                    'title' => $book['title'],
+                    'author' => $book['author'],
+                ],
+                [
+                    'genre' => $book['genre'],
+                    'publisher_id' => $publisher->id,
+                    'cover' => null,
+                ]
+            );
+        }
     }
 }
